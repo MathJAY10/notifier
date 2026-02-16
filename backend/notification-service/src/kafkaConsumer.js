@@ -1,4 +1,5 @@
 const { Kafka } = require("kafkajs");
+const { sendNotificationToFrontend } = require("./socketServer");
 
 const kafka = new Kafka({
   clientId: "notification-service",
@@ -20,12 +21,12 @@ const connectConsumer = async () => {
   });
 
   await consumer.run({
-    eachMessage: async ({ topic, partition, message }) => {
+    eachMessage: async ({ message }) => {
       const data = message.value.toString();
 
       console.log("Received Notification:", data);
 
-      // later we will send via WebSocket
+      sendNotificationToFrontend(data);
     },
   });
 };
